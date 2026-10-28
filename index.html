@@ -3,188 +3,196 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sarkari Exam Photo & Signature Resizer</title>
+  <title>Sarkari Exam AI Photo & Sign Resizer</title>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: #f4f6f9; margin: 0; padding: 15px; display: flex; flex-direction: column; align-items: center; }
-    .card { background: white; max-width: 480px; width: 100%; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-    h2 { margin-top: 0; font-size: 20px; color: #1a365d; text-align: center; }
-    .badge { background: #e2e8f0; color: #334155; font-size: 11px; padding: 4px 8px; border-radius: 4px; display: block; text-align: center; margin-bottom: 15px; }
-    .form-group { margin-bottom: 12px; }
-    label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #333; }
-    input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
-    .row { display: flex; gap: 10px; }
-    .row > div { flex: 1; }
-    .btn-group { display: flex; gap: 8px; margin: 15px 0; }
-    button { flex: 1; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 14px; }
-    .btn-primary { background: #2563eb; color: white; }
-    .btn-secondary { background: #059669; color: white; }
-    .btn-download { background: #dc2626; color: white; width: 100%; margin-top: 10px; }
-    #preview-area { text-align: center; margin-top: 15px; display: none; }
-    canvas { max-width: 100%; border: 1px solid #94a3b8; border-radius: 4px; }
-    .file-size-info { font-size: 13px; font-weight: bold; color: #059669; margin-top: 6px; }
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: #0f172a; margin: 0; padding: 16px; color: #f8fafc; display: flex; flex-direction: column; align-items: center; }
+    .container { max-width: 460px; width: 100%; }
+    .card { background: #1e293b; padding: 20px; border-radius: 14px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); border: 1px solid #334155; }
+    h1 { font-size: 20px; margin: 0 0 4px 0; text-align: center; color: #38bdf8; }
+    .sub { font-size: 12px; text-align: center; color: #94a3b8; margin-bottom: 16px; }
+    
+    /* Before After Transformation Demo Cards */
+    .demo-strip { display: flex; gap: 8px; margin-bottom: 18px; background: #0f172a; padding: 10px; border-radius: 10px; border: 1px solid #334155; }
+    .demo-item { flex: 1; text-align: center; font-size: 11px; }
+    .demo-item span { display: block; margin-bottom: 4px; font-weight: 600; }
+    .demo-badge-old { color: #f87171; }
+    .demo-badge-ai { color: #4ade80; }
+    .demo-box { height: 75px; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; font-size: 10px; padding: 4px; }
+    .demo-box.old { background: #334155; filter: blur(0.6px); color: #cbd5e1; border: 1px dashed #64748b; }
+    .demo-box.ai { background: #ffffff; color: #000; border: 2px solid #22c55e; font-weight: bold; position: relative; }
+    .demo-box.ai .strip { background: #000; color: #fff; width: 100%; font-size: 8px; position: absolute; bottom: 0; text-align: center; padding: 2px 0; }
 
-    /* Buy Me a Coffee / Chai Button */
-    .support-box {
-      margin-top: 20px;
-      padding: 14px;
-      background: #fffbeb;
-      border: 1px dashed #f59e0b;
-      border-radius: 8px;
-      text-align: center;
-    }
-    .support-box p {
-      margin: 0 0 10px 0;
-      font-size: 13px;
-      color: #92400e;
-      font-weight: 600;
-    }
-    .btn-coffee {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      background: #f59e0b;
-      color: #ffffff;
-      padding: 10px 18px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: bold;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
-    }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-size: 12px; font-weight: 600; color: #cbd5e1; margin-bottom: 5px; }
+    input[type="text"], input[type="file"] { width: 100%; padding: 10px; border: 1px solid #475569; border-radius: 8px; background: #0f172a; color: #fff; font-size: 13px; }
+    .row { display: flex; gap: 8px; }
+    .row > div { flex: 1; }
+
+    .btn-action { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 13px; transition: 0.2s; margin-top: 4px; }
+    .btn-photo { background: #2563eb; color: #fff; }
+    .btn-sign { background: #059669; color: #fff; }
+    .btn-download { background: #16a34a; color: #fff; font-size: 15px; margin-top: 12px; }
+
+    #preview-container { display: none; margin-top: 16px; text-align: center; background: #0f172a; padding: 14px; border-radius: 10px; border: 1px solid #334155; }
+    canvas { max-width: 100%; height: auto; border: 1px solid #475569; border-radius: 6px; background: #fff; }
+    .status-text { font-size: 13px; font-weight: bold; color: #4ade80; margin: 8px 0; }
+
+    .upi-box { margin-top: 18px; padding: 12px; background: rgba(245, 158, 11, 0.1); border: 1px dashed #f59e0b; border-radius: 8px; text-align: center; }
+    .btn-upi { display: inline-block; background: #f59e0b; color: #000; font-weight: 8px; padding: 10px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 13px; margin-top: 8px; }
   </style>
 </head>
 <body>
 
+<div class="container">
   <div class="card">
-    <h2>Sarkari Photo & Sign Resizer</h2>
-    <span class="badge">SSC, Railway, Police & State Exam Ready</span>
+    <h1>Sarkari AI Resizer & Enhancer</h1>
+    <div class="sub">SSC, Railway, Police & State Exam Precision Format</div>
 
+    <!-- Transformation Visuals -->
+    <div class="demo-strip">
+      <div class="demo-item">
+        <span class="demo-badge-old">Raw Mobile Pic</span>
+        <div class="demo-box old">Blur / Wrong KB<br>Dark Shadows</div>
+      </div>
+      <div class="demo-item" style="max-width:24px; align-self:center; font-size:16px; color:#38bdf8;">➔</div>
+      <div class="demo-item">
+        <span class="demo-badge-ai">AI Enhanced</span>
+        <div class="demo-box ai">
+          <span>Clarity + Sharp</span>
+          <div class="strip">NAME & DOOP OK</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Inputs -->
     <div class="form-group">
-      <label>1. Select Photo / Signature:</label>
-      <input type="file" id="imageInput" accept="image/*">
+      <label>1. Photo Ya Signature Upload Karein:</label>
+      <input type="file" id="filePicker" accept="image/*">
     </div>
 
     <div class="row">
       <div class="form-group">
         <label>Candidate Name (Optional):</label>
-        <input type="text" id="nameInput" placeholder="e.g. RAHUL SINGH">
+        <input type="text" id="candName" placeholder="e.g. HIMANSHU SINGH">
       </div>
       <div class="form-group">
         <label>Date of Photo (Optional):</label>
-        <input type="text" id="dateInput" placeholder="DD-MM-YYYY">
+        <input type="text" id="photoDate" placeholder="DD-MM-YYYY">
       </div>
     </div>
 
-    <div class="btn-group">
-      <button class="btn-primary" onclick="processImage(50)">Photo Mode (&lt; 50 KB)</button>
-      <button class="btn-secondary" onclick="processImage(20, true)">Sign Mode (&lt; 20 KB)</button>
+    <div class="row">
+      <button class="btn-action btn-photo" onclick="buildOutput(false)">⚡ AI Photo (Under 50 KB)</button>
+      <button class="btn-action btn-sign" onclick="buildOutput(true)">✍️ AI Sign (Under 20 KB)</button>
     </div>
 
-    <div id="preview-area">
-      <canvas id="outputCanvas"></canvas>
-      <div class="file-size-info" id="sizeLabel">Calculated Size: -- KB</div>
-      <button class="btn-download" id="downloadBtn">Download Resized Image</button>
+    <!-- Preview Output -->
+    <div id="preview-container">
+      <canvas id="canvasPreview"></canvas>
+      <div class="status-text" id="sizeFeedback">Processing...</div>
+      <button class="btn-action btn-download" id="downloadAction">Download High-Quality Result</button>
     </div>
 
-    <!-- Buy Me A Chai / Coffee Section -->
-    <div class="support-box">
-      <p>Cyber Cafe ke ₹50 bache? Ek cup chai pila do! ☕</p>
-      <!-- Apni UPhimanshu0532000@pingpay I ID 'YOUR_UPI_ID_HERE@upi' ki jagah daal do -->
-      <a class="btn-coffee" href="upi://pay?pa=YOUR_UPI_ID_HERE@upi&pn=SupportDeveloper&am=10&cu=INR&tn=Thanks%20for%20resizer">
-        ☕ Buy Me a Chai (₹10)
-      </a>
+    <!-- UPI Support Box -->
+    <div class="upi-box">
+      <div style="font-size: 12px; color: #fbbf24;">Cyber Cafe ke ₹50 bache? Ek cup chai pila do! ☕</div>
+      <a class="btn-upi" id="upiLink" href="upi://pay?pa=Himanshu0532000@pingpay&pn=HimanshuSingh&am=10&cu=INR&tn=Sarkari%20Resizer%20Chai">☕ Buy Me a Chai (₹10)</a>
     </div>
   </div>
+</div>
 
-  <script>
-    const imageInput = document.getElementById('imageInput');
-    const nameInput = document.getElementById('nameInput');
-    const dateInput = document.getElementById('dateInput');
-    const canvas = document.getElementById('outputCanvas');
-    const ctx = canvas.getContext('2d');
-    const previewArea = document.getElementById('preview-area');
-    const sizeLabel = document.getElementById('sizeLabel');
-    const downloadBtn = document.getElementById('downloadBtn');
+<script>
+  let rawImg = null;
+  const filePicker = document.getElementById('filePicker');
+  const previewContainer = document.getElementById('preview-container');
+  const canvas = document.getElementById('canvasPreview');
+  const ctx = canvas.getContext('2d');
+  const sizeFeedback = document.getElementById('sizeFeedback');
+  const downloadAction = document.getElementById('downloadAction');
 
-    let loadedImg = null;
-
-    imageInput.addEventListener('change', function(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = function(evt) {
-        loadedImg = new Image();
-        loadedImg.onload = function() {
-          previewArea.style.display = 'block';
-          processImage(50);
-        };
-        loadedImg.src = evt.target.result;
+  filePicker.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+      rawImg = new Image();
+      rawImg.onload = function() {
+        buildOutput(false);
       };
-      reader.readAsDataURL(file);
-    });
+      rawImg.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  });
 
-    function processImage(targetKB, isSign = false) {
-      if (!loadedImg) {
-        alert("Pehle image select karein!");
-        return;
-      }
+  function buildOutput(isSign) {
+    if (!rawImg) {
+      alert("Pehle kripya koi photo ya sign select karein!");
+      return;
+    }
 
-      const name = nameInput.value.trim().toUpperCase();
-      const date = dateInput.value.trim();
+    previewContainer.style.display = "block";
+    const name = document.getElementById('candName').value.trim().toUpperCase();
+    const date = document.getElementById('photoDate').value.trim();
 
-      const width = isSign ? 300 : 350;
-      const height = isSign ? 120 : (name || date ? 450 : 420);
-      const textBarHeight = (name || date) && !isSign ? 70 : 0;
+    const w = isSign ? 300 : 350;
+    const footerH = (!isSign && (name || date)) ? 60 : 0;
+    const h = isSign ? 120 : (400 + footerH);
 
-      canvas.width = width;
-      canvas.height = height;
+    canvas.width = w;
+    canvas.height = h;
 
+    // AI Enhancer: High contrast + sharpness filter effect
+    ctx.filter = isSign ? "contrast(140%) grayscale(100%) brightness(105%)" : "contrast(108%) brightness(102%) saturate(105%)";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, w, h);
+    ctx.drawImage(rawImg, 0, 0, w, h - footerH);
+    ctx.filter = "none";
+
+    // Name & Date Strip
+    if (footerH > 0) {
       ctx.fillStyle = "#ffffff";
-      ctx.fillRect(0, 0, width, height);
-      ctx.drawImage(loadedImg, 0, 0, width, height - textBarHeight);
+      ctx.fillRect(0, h - footerH, w, footerH);
+      ctx.strokeStyle = "#000000";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, h - footerH, w, footerH);
 
-      if (textBarHeight > 0) {
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, height - textBarHeight, width, textBarHeight);
-        ctx.fillStyle = "#000000";
-        ctx.textAlign = "center";
+      ctx.fillStyle = "#000000";
+      ctx.textAlign = "center";
 
-        if (name && date) {
-          ctx.font = "bold 15px sans-serif";
-          ctx.fillText(name, width / 2, height - textBarHeight + 25);
-          ctx.font = "14px sans-serif";
-          ctx.fillText("DOOP: " + date, width / 2, height - textBarHeight + 52);
-        } else if (name || date) {
-          ctx.font = "bold 16px sans-serif";
-          ctx.fillText(name || ("DOOP: " + date), width / 2, height - textBarHeight + 40);
-        }
+      if (name && date) {
+        ctx.font = "bold 14px sans-serif";
+        ctx.fillText(name, w / 2, (h - footerH) + 24);
+        ctx.font = "12px sans-serif";
+        ctx.fillText("DOOP: " + date, w / 2, (h - footerH) + 46);
+      } else {
+        ctx.font = "bold 15px sans-serif";
+        ctx.fillText(name || ("DOOP: " + date), w / 2, (h - footerH) + 36);
       }
-
-      compressToTargetKB(targetKB);
     }
 
-    function compressToTargetKB(targetKB) {
-      let quality = 0.92;
-      let dataUrl = canvas.toDataURL('image/jpeg', quality);
-      let kb = Math.round((dataUrl.length * 3 / 4) / 1024);
+    compressImage(isSign ? 20 : 50);
+  }
 
-      while (kb > targetKB && quality > 0.1) {
-        quality -= 0.05;
-        dataUrl = canvas.toDataURL('image/jpeg', quality);
-        kb = Math.round((dataUrl.length * 3 / 4) / 1024);
-      }
+  function compressImage(limitKB) {
+    let q = 0.95;
+    let url = canvas.toDataURL('image/jpeg', q);
+    let kb = Math.round((url.length * 3 / 4) / 1024);
 
-      sizeLabel.innerText = `Final Size: ~${kb} KB (Target: Under ${targetKB} KB)`;
-      
-      downloadBtn.onclick = function() {
-        const a = document.createElement('a');
-        a.href = dataUrl;
-        a.download = `sarkari_resized_${targetKB}kb.jpg`;
-        a.click();
-      };
+    while (kb > limitKB && q > 0.15) {
+      q -= 0.05;
+      url = canvas.toDataURL('image/jpeg', q);
+      kb = Math.round((url.length * 3 / 4) / 1024);
     }
-  </script>
+
+    sizeFeedback.innerText = `Final AI Output: ${kb} KB (Target: Under ${limitKB} KB)`;
+    downloadAction.onclick = function() {
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `sarkari_ai_${limitKB}kb.jpg`;
+      a.click();
+    };
+  }
+</script>
 </body>
 </html>
