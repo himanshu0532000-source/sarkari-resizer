@@ -23,7 +23,36 @@
     #preview-area { text-align: center; margin-top: 15px; display: none; }
     canvas { max-width: 100%; border: 1px solid #94a3b8; border-radius: 4px; }
     .file-size-info { font-size: 13px; font-weight: bold; color: #059669; margin-top: 6px; }
-    .ad-placeholder { background: #e5e7eb; border: 1px dashed #9ca3af; text-align: center; padding: 15px; margin: 15px 0; font-size: 12px; color: #6b7280; border-radius: 6px; }
+
+    /* Buy Me a Coffee / Chai Button */
+    .support-box {
+      margin-top: 20px;
+      padding: 14px;
+      background: #fffbeb;
+      border: 1px dashed #f59e0b;
+      border-radius: 8px;
+      text-align: center;
+    }
+    .support-box p {
+      margin: 0 0 10px 0;
+      font-size: 13px;
+      color: #92400e;
+      font-weight: 600;
+    }
+    .btn-coffee {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: #f59e0b;
+      color: #ffffff;
+      padding: 10px 18px;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    }
   </style>
 </head>
 <body>
@@ -31,8 +60,6 @@
   <div class="card">
     <h2>Sarkari Photo & Sign Resizer</h2>
     <span class="badge">SSC, Railway, Police & State Exam Ready</span>
-
-    <div class="ad-placeholder">Ad Space (Auto-Earning Slot)</div>
 
     <div class="form-group">
       <label>1. Select Photo / Signature:</label>
@@ -61,7 +88,14 @@
       <button class="btn-download" id="downloadBtn">Download Resized Image</button>
     </div>
 
-    <div class="ad-placeholder">Ad Space (Auto-Earning Slot)</div>
+    <!-- Buy Me A Chai / Coffee Section -->
+    <div class="support-box">
+      <p>Cyber Cafe ke ₹50 bache? Ek cup chai pila do! ☕</p>
+      <!-- Apni UPhimanshu0532000@pingpay I ID 'YOUR_UPI_ID_HERE@upi' ki jagah daal do -->
+      <a class="btn-coffee" href="upi://pay?pa=YOUR_UPI_ID_HERE@upi&pn=SupportDeveloper&am=10&cu=INR&tn=Thanks%20for%20resizer">
+        ☕ Buy Me a Chai (₹10)
+      </a>
+    </div>
   </div>
 
   <script>
